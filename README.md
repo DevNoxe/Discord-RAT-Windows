@@ -1,24 +1,24 @@
 # **Discord RAT Windows - botConnect**
 
-Este proyecto es una **herramienta de administración remota (RAT)** basada en **Discord**, que permite ejecutar comandos de forma remota en una máquina víctima a través de un bot de Discord. El bot se conecta a un servidor de Discord especificado por el usuario, y los comandos se ejecutan a través de un canal de texto dentro del servidor de Discord, lo que facilita la administración remota en un entorno controlado.
+This project is a **Remote Administration Tool (RAT)** based on **Discord**, which allows commands to be executed remotely on a victim machine via a Discord bot. The bot connects to a user-specified Discord server, and commands are executed via a text channel within the Discord server, making it easy to manage remotely in a controlled environment.
 
-El bot es capaz de ejecutar comandos personalizados con el prefijo `!`, proporcionando acceso completo a la máquina víctima y facilitando la interacción en tiempo real. El proyecto incluye varias herramientas para automatizar la creación y compilación de un **archivo ejecutable (EXE)** que puede ser ejecutado en la máquina víctima sin levantar sospechas.
+The bot is capable of executing custom commands prefixed with `!`, providing full access to the victim machine and facilitating real-time interaction. The project includes several tools to automate the creation and compilation of an **executable file (EXE)** that can be executed on the victim machine without raising suspicion.
 
 ---
 
-## **Características del Proyecto**
+## **Project Characteristics**
 
-El proyecto incluye los siguientes scripts y funcionalidades:
+The project includes the following scripts and functionalities:
 
 ### 1. **botConnect.py**
 
-- **Función Principal**: Este script genera la conexión del bot de Discord que se conecta a un servidor específico.
-- **Comandos**:
-    - `!myhelp`: Muestra una lista de los comandos disponibles.
-    - `!geolocate`: Muestra la dirección IP pública de la máquina víctima, mas demas información sobre la ubicación de dicha IP.
-    - **Comandos adicionales**: Los comandos personalizados que puedes definir para interactuar con la máquina víctima.
+- **Main Function**: This script generates the connection of the Discord bot that connects to a specific server.
+- **Commands**:
+    - `!myhelp`: Shows a list of available commands.
+    - `!geolocate`: Shows the public IP address of the victim machine, plus other information about the location of said IP.
+    - **Additional commands**: Custom commands that you can define to interact with the victim machine.
 
-## !myhelp (Lista)
+## !myhelp (List)
 
 ### 📜 Comandos Disponibles
 
@@ -136,30 +136,30 @@ El proyecto incluye los siguientes scripts y funcionalidades:
 
 ### 2. **CompilerPYtoEXE.py**
 
-- **Función Principal**: Automatiza el proceso de configuración y compilación del bot en un archivo ejecutable **.exe**.
-- **Proceso**:
-    - Solicita al usuario el **Bot Token** y el **Server ID** (el ID del servidor de Discord).
-    - Compila el archivo Python (`botConnect.py`) a un archivo EXE que puede ser ejecutado en la máquina víctima.
+- **Main Function**: Automates the bot configuration and compilation process into an executable **.exe** file.
+- **Process**:
+    - Requests the user for the **Bot Token** and the **Server ID** (the Discord server ID).
+    - Compiles the Python file (`botConnect.py`) to an EXE file that can be executed on the victim machine.
 
-### 3. **guiaAutoextraible.py**
+### 3. **guiaAutoextraibleEXE.py**
 
-- **Función Principal**: Instrucciones detalladas sobre cómo empaquetar el archivo `.exe` con un archivo `fake_error.vbs` (que simula un error de Windows), la guía esta en el script llamado `guiaAutoextraibleEXE.py`.
-- **Objetivo**: Hacer que el archivo `.exe` pase desapercibido al empaquetarlo en un archivo **autoextraíble** que simula un error de Windows.
+- **Main Function**: Detailed instructions on how to package the `.exe` file with a `fake_error.vbs` file (which simulates a Windows error), the guide is in the script called `guiaAutoextraibleEXE.py`.
+- **Goal**: Make the `.exe` file go unnoticed by packaging it in a **self-extracting** file that simulates a Windows error.
 
 ### 4. **ScriptSmartScreen**
 
-- **Función Principal**: Scripts que permiten desactivar el **SmartScreen** de Windows para evitar que se bloquee el archivo ejecutable.
-- Incluye:
-    - **DuckyScript**: Para desactivar SmartScreen.
-    - **Script en PowerShell**: Para desactivar SmartScreen de manera automática en la máquina víctima.
+- **Main Function**: Scripts that allow you to disable the Windows **SmartScreen** to prevent the executable file from blocking.
+- Includes:
+    - **DuckyScript**: To disable SmartScreen.
+    - **PowerShell script**: To disable SmartScreen automatically on the victim machine.
 
-> NOTA:
+> NOTE:
 
-Para estos 2 scripts anteriores se necesitaria ``ingenieria social`` para que de alguna forma el usuario victima ejecute por lo menos el script ``.ps1`` y asi desactivar el ``SmartScreen``.
-### 5. **ExlusionWindowsDefender (Windows 11)**
+For these 2 previous scripts ``social engineering`` would be needed so that somehow the victim user executes at least the ``.ps1`` script and thus deactivates the ``SmartScreen``.
+### 5. **ExclusionWindowsDefender (Windows 11)**
 
-- **Función Principal**: Herramienta para evitar que **Windows Defender** detecte el archivo ejecutable como una amenaza.
-- **Instrucciones**: Incluye un archivo `carpetaExcluidaWindowsDefender.ps1` para crear una carpeta excluida de los escaneos de Windows Defender, asegurando que el archivo ejecutable no sea detectado.
+- **Main Function**: Tool to prevent **Windows Defender** from detecting the executable file as a threat.
+- **Instructions**: Include a file `folderExcludedWindowsDefender.ps1` to create a folder excluded from Windows Defender scans, ensuring that the executable file is not detected.
 
 > NOTA:
 

@@ -159,138 +159,138 @@ For these 2 previous scripts ``social engineering`` would be needed so that some
 ### 5. **ExclusionWindowsDefender (Windows 11)**
 
 - **Main Function**: Tool to prevent **Windows Defender** from detecting the executable file as a threat.
-- **Instructions**: Include a file `folderExcludedWindowsDefender.ps1` to create a folder excluded from Windows Defender scans, ensuring that the executable file is not detected.
+- **Instructions**: Include a file `carpetaExcluidaWindowsDefender.ps1` to create a folder excluded from Windows Defender scans, ensuring that the executable file is not detected.
 
-> NOTA:
+> NOTE:
 
-Para este script de aqui de la misma forma que antes, habria que hacer algun tipo de ``ingenieria social`` para que el usuario victima ejecute dicho script y asi que se le genere una carpeta que evite el ``Windows Defender`` donde se deposite nuestro ``Troyano``. (En Windows 10 no lo suele detectar como "Malware")
+For this script here, in the same way as before, some type of ``social engineering`` would have to be done so that the victim user executes said script and thus generates a folder that avoids ``Windows Defender`` where our ``Trojan`` is deposited. (In Windows 10 it is not usually detected as "Malware")
 
 ---
 
-## **Requisitos Previos**
+## **Prerequisites**
 
-Antes de ejecutar este proyecto, asegúrate de tener configurados los siguientes requisitos:
+Before running this project, make sure you have the following requirements configured:
 
-1. **Python 3.x**: Este proyecto está escrito en ``Python3``. Puedes instalarlo desde el siguiente enlace:
+1. **Python 3.x**: This project is written in ``Python3``. You can install it from the following link:
     
-    - [Descargar Python 3 desde Microsoft Store](https://apps.microsoft.com/detail/9NRWMJP3717K?hl=neutral&gl=ES&ocid=pdpshare)
+    - [Download Python3 from the Microsoft Store](https://apps.microsoft.com/detail/9NRWMJP3717K?hl=neutral&gl=ES&ocid=pdpshare)
     
-1. **Dependencias**:
+1. **Dependencies**:
     
-    - Este proyecto requiere varias bibliotecas ``Python`` que se instalarán automáticamente a través del archivo `requirements.txt`.
+    - This project requires several ``Python`` libraries that will be installed automatically via the `requirements.txt` file.
     
-    Para instalar las dependencias necesarias, simplemente ejecuta el siguiente comando en tu terminal:
+    To install the necessary dependencies, simply run the following command in your terminal:
 	
 	```
 	pip install -r requirements.txt
 	```
     
-    Esto instalará todas las bibliotecas necesarias para que el proyecto funcione correctamente.
+    This will install all the necessary libraries for the project to work correctly.
     
 
 ---
 
-## **Uso del Proyecto**
+## **Project Use**
 
-### 1. **Compilación del Bot con `CompilerPYtoEXE.py`**
+### 1. **Compiling the Bot with `CompilerPYtoEXE.py`**
 
-El script ``CompilerPYtoEXE.py`` automatiza el proceso de configuración del ``bot`` y la compilación del archivo **.exe**.
+The ``CompilerPYtoEXE.py`` script automates the process of configuring the ``bot`` and compiling the **.exe** file.
 
-#### Pasos para ejecutar **CompilerPYtoEXE.py**:
+#### Steps to run **CompilerPYtoEXE.py**:
 
-1. **Ejecuta el script `main.py`** haciendo doble clic sobre él.
+1. **Execute the `main.py`** script by double-clicking on it.
     
-    - **Importante**: **Nunca ejecutes directamente el script `CompilerPYtoEXE.py`**, ya que si lo haces, el proceso de compilación fallará. El script `main.py` se encarga de ejecutar correctamente **CompilerPYtoEXE.py**.
+    - **Important**: **Never directly run the `CompilerPYtoEXE.py`** script, as doing so will cause the compilation process to fail. The `main.py` script is responsible for correctly executing **CompilerPYtoEXE.py**.
     
-2. **Proporciona los datos del bot**:  
+2. **Provide bot data**:  
 
-    El script abrirá una ventana de configuración donde deberás ingresar el **Bot Token** y el **Server ID**:
+    The script will open a configuration window where you must enter the **Bot Token** and the **Server ID**:
     
-    - **Bot Token**: Puedes obtener este token desde el ``Discord Developer`` Portal.
-    - **Server ID**: Este es el ``ID`` del servidor de ``Discord`` al que el bot se conectará. Para obtenerlo, activa el modo de desarrollador en ``Discord`` y haz clic derecho sobre el servidor para copiar su ``ID``.
+    - **Bot Token**: You can obtain this token from the ``Discord Developer`` Portal.
+    - **Server ID**: This is the ``ID`` of the ``Discord`` server that the bot will connect to. To obtain it, activate developer mode in ``Discord`` and right click on the server to copy its ``ID``.
     
-3. **Selecciona el archivo `botConnect.py`**:
+3. **Select the `botConnect.py` file**:
 
-    Una vez configurado el bot, selecciona el archivo `botConnect.py` que deseas usar para compilar.
+    Once your bot is configured, select the `botConnect.py` file you want to use to build.
     
-4. **Especifica la ubicación del archivo compilado**:  
+4. **Specifies the location of the compiled file**:  
 
-    Después de seleccionar el archivo, se te pedirá que elijas la ubicación donde quieres guardar el archivo **.exe** compilado.
+    After selecting the file, you will be asked to choose the location where you want to save the compiled **.exe** file.
     
-5. **Espera a que se complete la compilación**:  
+5. **Wait for the build to complete**:  
 
-    El script generará el archivo **.exe** que podrás ejecutar en la máquina víctima para que el bot se conecte al servidor de ``Discord`` especificado.
+    The script will generate the **.exe** file that you can run on the victim machine for the bot to connect to the specified ``Discord`` server.
     
-### Video practico:
+### Practical video:
 
 https://github.com/user-attachments/assets/d5e40b83-6d99-4d84-95ef-77d46511ccb9
 
 ---
 
-### 2. **Evitar el Bloqueo de SmartScreen**
+### 2. **Bypass SmartScreen Lock**
 
 #### 1. **DuckyScript**:
 
-- **Función**: Desactiva el ``SmartScreen`` para que no se bloquee el archivo ``.exe`` al ejecutarlo.
-- **Uso**: Simplemente ejecuta el ``DuckyScript`` en el entorno de la víctima para desactivar ``SmartScreen`` con un ``BadUSB``. (Aunque esto requiere tener el PC de la victima a nivel físico)
+- **Function**: Disable ``SmartScreen`` so that the ``.exe`` file does not crash when executed.
+- **Usage**: Simply run ``DuckyScript`` in the victim's environment to disable ``SmartScreen`` with a ``BadUSB``. (Although this requires having the victim's PC at a physical level)
 
-#### 2. **Script en PowerShell (Carpeta `ScriptSmartScreen`)**:
+#### 2. **PowerShell script (`ScriptSmartScreen` folder)**:
 
-- Se incluye un script en ``PowerShell`` que desactiva el ``SmartScreen`` de forma automática.
-- **Ejecuta el script de PowerShell** para evitar que ``SmartScreen`` bloquee la ejecución del archivo ``.exe`` generado. (Esta técnica habría que realizar una ``ingenieria social`` para ello)
-
----
-
-### 3. **Evitar la Detección de Windows Defender (Windows 11)**
-
-En algunos casos, **Windows Defender** podría detectar el archivo ejecutable como una amenaza en ``Windows 11``. Para evitar esto, se incluyen herramientas para excluir el archivo ejecutable de los escaneos de ``Windows Defender``.
-
-#### Pasos para evitar la detección de Windows Defender:
-
-1. **Ejecuta el script `carpetaExcluidaWindowsDefender.ps1`**:
-    
-    - Este script creará una carpeta que será excluida de los escaneos de ``Windows Defender``.
-    - **Ejecuta el script con PowerShell** para asegurarte de que la carpeta donde almacenarás el archivo ``EXE`` no sea escaneada por ``Windows Defender``.
-    
-2. **Mueve el archivo .exe a la carpeta excluida**:
-    
-    - Después de ejecutar el script, mueve el archivo **.exe** generado a la carpeta que fue excluida de los escaneos de ``Windows Defender``.
+- A ``PowerShell`` script is included that disables the ``SmartScreen`` automatically.
+- **Run the PowerShell script** to prevent ``SmartScreen`` from blocking the execution of the generated ``.exe`` file. (This technique would require ``social engineering`` for this)
 
 ---
 
-### 4. **Hacer el Archivo `.exe` Más Realista**
+### 3. **Bypass Windows Defender Detection (Windows 11)**
 
-Para que el archivo **.exe** pase desapercibido, se incluye el archivo `guiaAutoextraible.py`, que explica cómo crear un archivo **autoextraíble** con **WinRAR**.
+In some cases, **Windows Defender** might detect the executable file as a threat in ``Windows 11``. To prevent this, tools are included to exclude the executable file from ``Windows Defender`` scans.
 
-#### Pasos para empaquetar el archivo `.exe` como autoextraíble:
+#### Steps to avoid Windows Defender detection:
 
-1. **Prepara el archivo `.exe`** generado y el archivo `fake_error.vbs` (que simula un error de Windows).
-2. Usa **WinRAR** para empaquetar ambos archivos en un archivo **autoextraíble**.
-3. El archivo autoextraíble se ejecutará y simulará un error de ``Windows``, haciendo que el bot pase desapercibido.
+1. **Execute the script `carpetaExcluidaWindowsDefender.ps1`**:
+    
+    - This script will create a folder that will be excluded from ``Windows Defender`` scans.
+    - **Run the script with PowerShell** to ensure that the folder where you will store the ``EXE`` file is not scanned by ``Windows Defender``.
+    
+2. **Move the .exe file to the excluded folder**:
+    
+    - After running the script, move the generated **.exe** file to the folder that was excluded from ``Windows Defender`` scans.
 
-### Video practico:
+---
+
+### 4. **Make the `.exe` File More Realistic**
+
+To make the **.exe** file go unnoticed, the `guiaAutoextraible.py` file is included, which explains how to create a **self-extractable** archive with **WinRAR**.
+
+#### Steps to package the `.exe` file as self-extracting:
+
+1. **Prepare the generated `.exe`** file and the `fake_error.vbs` file (which simulates a Windows error).
+2. Use **WinRAR** to package both files into a **self-extracting** archive.
+3. The self-extracting file will run and simulate a ``Windows`` error, making the bot go unnoticed.
+
+### Practical video:
 
 https://github.com/user-attachments/assets/1f287107-ead9-4403-a1e7-63d565a0eddb
 
 ---
 
-### 5. **Configuración del Bot de Discord**
+### 5. **Discord Bot Settings**
 
-Para configurar el bot de Discord:
+To configure the Discord bot:
 
-1. Ejecuta el archivo `DiscordBotPage.bat` para ser redirigido a la página de configuración del bot en el **Discord Developer Portal**.
-2. Sigue los pasos en la página para configurar el **Bot Token** y obtener los permisos necesarios para el bot en tu servidor.
-
----
-
-## **Advertencia y Uso Responsable**
-
-Este proyecto está destinado a fines educativos y para pruebas de penetración en entornos controlados. **No uses este proyecto sin el consentimiento explícito del propietario del sistema que estás controlando.** El uso no autorizado de este tipo de herramientas es ilegal y está en contra de los términos de servicio de Discord, así como de las leyes locales e internacionales.
-
-Este proyecto no debe ser utilizado para actividades maliciosas o para comprometer sistemas sin el consentimiento de las partes involucradas.
+1. Run the `DiscordBotPage.bat` file to be redirected to the bot configuration page in the **Discord Developer Portal**.
+2. Follow the steps on the page to configure the **Bot Token** and obtain the necessary permissions for the bot on your server.
 
 ---
 
-## **Contribuciones**
+## **Warning and Responsible Use**
 
-Si deseas contribuir al proyecto, por favor, abre un **pull request** o reporta cualquier problema en la sección de **issues** de este repositorio.
+This project is intended for educational purposes and for penetration testing in controlled environments. **Do not use this project without the explicit consent of the owner of the system you are controlling.** Unauthorized use of these types of tools is illegal and against Discord's terms of service, as well as local laws and regulations. international.
+
+This project should not be used for malicious activities or to compromise systems without the consent of the parties involved.
+
+---
+
+## **Contributions**
+
+If you would like to contribute to the project, please open a **pull request** or report any issues in the **issues** section of this repository.

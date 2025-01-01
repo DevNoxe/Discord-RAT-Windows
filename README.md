@@ -221,6 +221,9 @@ El script ``CompilerPYtoEXE.py`` automatiza el proceso de configuración del ``b
 
     El script generará el archivo **.exe** que podrás ejecutar en la máquina víctima para que el bot se conecte al servidor de ``Discord`` especificado.
     
+### Video practico:
+
+https://github.com/user-attachments/assets/90886a19-4331-4254-b696-b376b18e69e1
 
 ---
 
@@ -264,6 +267,10 @@ Para que el archivo **.exe** pase desapercibido, se incluye el archivo `guiaAuto
 1. **Prepara el archivo `.exe`** generado y el archivo `fake_error.vbs` (que simula un error de Windows).
 2. Usa **WinRAR** para empaquetar ambos archivos en un archivo **autoextraíble**.
 3. El archivo autoextraíble se ejecutará y simulará un error de ``Windows``, haciendo que el bot pase desapercibido.
+
+### Video practico:
+
+https://github.com/user-attachments/assets/3b8d18be-7c0f-4acd-893e-a424feff0e3e
 
 ---
 

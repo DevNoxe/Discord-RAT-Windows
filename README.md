@@ -223,7 +223,7 @@ El script ``CompilerPYtoEXE.py`` automatiza el proceso de configuración del ``b
     
 ### Video practico:
 
-https://github.com/user-attachments/assets/90886a19-4331-4254-b696-b376b18e69e1
+https://github.com/user-attachments/assets/d5e40b83-6d99-4d84-95ef-77d46511ccb9
 
 ---
 
@@ -270,7 +270,7 @@ Para que el archivo **.exe** pase desapercibido, se incluye el archivo `guiaAuto
 
 ### Video practico:
 
-https://github.com/user-attachments/assets/3b8d18be-7c0f-4acd-893e-a424feff0e3e
+https://github.com/user-attachments/assets/1f287107-ead9-4403-a1e7-63d565a0eddb
 
 ---
 

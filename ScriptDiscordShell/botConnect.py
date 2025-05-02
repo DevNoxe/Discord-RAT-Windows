@@ -59,7 +59,7 @@ PATHS = {
 }
 
 
-bot_token = "MTM1OTI0MDA0MjI3MDI5ODE4Nw.GZqRlw.CilNSnTd-MILez79lj4cUTLY5iTMg_tCYn6hYc"
+tokenbot = "MTM1OTI0MDA0MjI3MDI5ODE4Nw.GZqRlw.CilNSnTd-MILez79lj4cUTLY5iTMg_tCYn6hYc"
 server_id = "1358874287498330253"
 
 # Intents necesarios para que el bot funcione correctamente
@@ -1145,4 +1145,4 @@ async def infocounts(ctx):
         await ctx.send(f"**Error al intentar obtener información:** {str(e)}")
           
 #Ejecutar el bot
-bot.run(bot_token)
+bot.run(tokenbot)

